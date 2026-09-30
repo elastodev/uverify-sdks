@@ -20,6 +20,10 @@ All server SDKs behave the same way:
 - webhook signature verification (`t=…,v1=HMAC-SHA256(secret, "t.body")`, 5-minute replay window);
 - no runtime dependencies.
 
+## Examples
+
+- [`examples/expo-liveness`](examples/expo-liveness): an Expo app running the face check, a NIN/BVN face match and a verification link with `@uverifyng/react-native-liveness`, against the sandbox.
+
 ## Keeping them in step with the API
 
 [`contract/public-api.json`](contract/public-api.json) lists every route an API key can call. Each SDK has a contract test that fails if a route has no method, so a new endpoint can’t ship without SDK coverage. Update the file when the API gains a public route.

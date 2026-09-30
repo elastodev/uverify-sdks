@@ -57,7 +57,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-        with: { fetch-depth: 0 }
+        # Don't leave the default GITHUB_TOKEN in git config: it would be sent instead of PHP_MIRROR_TOKEN.
+        with: { fetch-depth: 0, persist-credentials: false }
       - run: |
           git subtree split --prefix php -b php-release
           git push "https://x-access-token:${{ secrets.PHP_MIRROR_TOKEN }}@github.com/elastodev/uverify-php.git" php-release:main --force

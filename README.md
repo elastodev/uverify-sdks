@@ -34,6 +34,6 @@ CI (`.github/workflows/ci.yml`) runs every SDK on each supported version: Node 1
 
 ## Releasing
 
-Tag a release per package (`node-v0.1.0`, `python-v0.1.0`, …); the release workflow publishes it. The PHP package is mirrored to its own repository, since Packagist needs `composer.json` at a repository’s root.
+Tag a release per package (`node-v0.1.0`, `python-v0.1.0`, …); the release workflow publishes it. Step by step, with the files to bump and what to do when a release fails: [RELEASING.md](RELEASING.md). The PHP package is mirrored to its own repository, since Packagist needs `composer.json` at a repository’s root.
 
 MIT licence © Elasto Web Services Limited.

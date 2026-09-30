@@ -74,5 +74,6 @@ jobs:
         with: { channel: stable }
       - uses: dart-lang/setup-dart@v1
       - run: flutter pub get && flutter test
-      - run: grep -q "^version: ${GITHUB_REF_NAME#flutter-v}$" pubspec.yaml
+      - run: |
+          grep -q "^version: ${GITHUB_REF_NAME#flutter-v}$" pubspec.yaml
       - run: dart pub publish --force

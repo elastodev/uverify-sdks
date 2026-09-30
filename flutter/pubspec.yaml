@@ -14,9 +14,9 @@ dependencies:
     sdk: flutter
   webview_flutter: ^4.8.0
   webview_flutter_wkwebview: ^3.14.0
-  permission_handler: ^11.3.0
+  permission_handler: ">=11.3.0 <14.0.0"
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
-  flutter_lints: ^4.0.0
+  flutter_lints: ^6.0.0

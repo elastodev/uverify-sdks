@@ -1,0 +1,14 @@
+node_modules/
+dist/
+*.tgz
+__pycache__/
+*.egg-info/
+build/
+.venv/
+vendor/
+composer.lock
+.phpunit.result.cache
+.dart_tool/
+.packages
+pubspec.lock
+.DS_Store

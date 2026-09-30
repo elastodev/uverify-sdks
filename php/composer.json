@@ -1,0 +1,20 @@
+{
+  "name": "uverify/uverify-php",
+  "description": "Official PHP library for the UVerify API: BVN, NIN and ID checks, liveness, face match, ID documents and AML screening for Nigeria.",
+  "type": "library",
+  "license": "MIT",
+  "keywords": ["uverify", "kyc", "bvn", "nin", "liveness", "face-match", "aml", "nigeria"],
+  "homepage": "https://uverify.com.ng/docs",
+  "authors": [{ "name": "Elasto Web Services Limited" }],
+  "require": {
+    "php": ">=8.1",
+    "ext-curl": "*",
+    "ext-json": "*"
+  },
+  "require-dev": {
+    "phpunit/phpunit": "^10.5"
+  },
+  "autoload": { "psr-4": { "UVerify\\": "src/" } },
+  "autoload-dev": { "psr-4": { "UVerify\\Tests\\": "tests/" } },
+  "scripts": { "test": "phpunit tests" }
+}

@@ -1,0 +1,78 @@
+name: Release
+
+# Push a tag for one package: node-v0.1.0, python-v0.1.0, php-v0.1.0, react-native-v0.1.0, flutter-v0.1.0.
+on:
+  push:
+    tags: ['node-v*', 'python-v*', 'php-v*', 'react-native-v*', 'flutter-v*']
+
+permissions:
+  contents: read
+  id-token: write # PyPI and pub.dev trusted publishing
+
+jobs:
+  node:
+    if: startsWith(github.ref_name, 'node-v')
+    runs-on: ubuntu-latest
+    defaults: { run: { working-directory: node } }
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: 22, registry-url: 'https://registry.npmjs.org' }
+      - run: npm install && npm test && npm run build
+      - run: test "$(node -p "require('./package.json').version")" = "${GITHUB_REF_NAME#node-v}"
+      - run: npm publish --access public --provenance
+        env: { NODE_AUTH_TOKEN: '${{ secrets.NPM_TOKEN }}' }
+
+  react-native:
+    if: startsWith(github.ref_name, 'react-native-v')
+    runs-on: ubuntu-latest
+    defaults: { run: { working-directory: react-native } }
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: 22, registry-url: 'https://registry.npmjs.org' }
+      - run: npm install && npm test && npm run build
+      - run: test "$(node -p "require('./package.json').version")" = "${GITHUB_REF_NAME#react-native-v}"
+      - run: npm publish --access public --provenance
+        env: { NODE_AUTH_TOKEN: '${{ secrets.NPM_TOKEN }}' }
+
+  python:
+    if: startsWith(github.ref_name, 'python-v')
+    runs-on: ubuntu-latest
+    environment: pypi
+    defaults: { run: { working-directory: python } }
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: { python-version: '3.12' }
+      - run: python -m unittest discover -s tests
+      - run: grep -q "version = \"${GITHUB_REF_NAME#python-v}\"" pyproject.toml
+      - run: pip install build && python -m build
+      - uses: pypa/gh-action-pypi-publish@release/v1
+        with: { packages-dir: python/dist }
+
+  # Packagist reads composer.json from a repository's root, so php/ is mirrored to its own repo.
+  php:
+    if: startsWith(github.ref_name, 'php-v')
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with: { fetch-depth: 0 }
+      - run: |
+          git subtree split --prefix php -b php-release
+          git push "https://x-access-token:${{ secrets.PHP_MIRROR_TOKEN }}@github.com/elastodev/uverify-php.git" php-release:main --force
+          git push "https://x-access-token:${{ secrets.PHP_MIRROR_TOKEN }}@github.com/elastodev/uverify-php.git" "php-release:refs/tags/v${GITHUB_REF_NAME#php-v}"
+
+  flutter:
+    if: startsWith(github.ref_name, 'flutter-v')
+    runs-on: ubuntu-latest
+    environment: pub.dev
+    defaults: { run: { working-directory: flutter } }
+    steps:
+      - uses: actions/checkout@v4
+      - uses: subosito/flutter-action@v2
+        with: { channel: stable }
+      - uses: dart-lang/setup-dart@v1
+      - run: flutter pub get && flutter test
+      - run: grep -q "^version: ${GITHUB_REF_NAME#flutter-v}$" pubspec.yaml
+      - run: dart pub publish --force

@@ -28,7 +28,7 @@ import type {
 } from './types.js';
 import { constructEvent, signPayload } from './webhooks.js';
 
-export const VERSION = '0.1.0';
+export const VERSION = '0.1.1';
 const DEFAULT_BASE_URL = 'https://api.uverify.com.ng/v1';
 
 export interface UVerifyOptions {
@@ -195,11 +195,11 @@ class Resource {
 
 class IdentityResource extends Resource {
   /** BVN lookup. Names are required by the registry. */
-  bvn(params: NamedCheckParams) {
+  bvn(params: PersonCheckParams) {
     return this.client.check('/identity/bvn', params);
   }
   /** BVN lookup + face match against the BVN photo. */
-  bvnFaceMatch(params: NamedCheckParams & FaceInput) {
+  bvnFaceMatch(params: PersonCheckParams & FaceInput) {
     return this.client.check('/identity/bvn/face-match', params);
   }
   nin(params: PersonCheckParams) {

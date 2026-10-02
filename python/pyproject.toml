@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "uverify"
-version = "0.1.0"
+version = "0.1.1"
 description = "Official Python library for the UVerify API: BVN, NIN and ID checks, liveness, face match, ID documents and AML screening for Nigeria."
 readme = "README.md"
 requires-python = ">=3.8"

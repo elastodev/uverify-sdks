@@ -1,6 +1,6 @@
 {
   "name": "@uverifyng/node",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Official Node.js library for the UVerify API: BVN, NIN and ID checks, liveness, face match, ID documents and AML screening for Nigeria.",
   "license": "MIT",
   "author": "Elasto Web Services Limited",

@@ -15,7 +15,7 @@ from typing import Any, Callable, Dict, Optional, Tuple, Union
 from . import webhooks as _webhooks
 from .errors import UVerifyConnectionError, UVerifyError
 
-VERSION = "0.1.0"
+VERSION = "0.1.1"
 DEFAULT_BASE_URL = "https://api.uverify.com.ng/v1"
 IMAGE_FIELDS = ("selfie_image", "front_image", "back_image")
 
@@ -188,11 +188,11 @@ class _Resource:
 
 
 class _Identity(_Resource):
-    def bvn(self, *, id_number: str, first_name: str, last_name: str, **kw: Any) -> Json:
-        """BVN lookup. Names are required by the registry. Also: dob, include_photo, reference, aml_screening, aml_monitoring."""
+    def bvn(self, *, id_number: str, first_name: Optional[str] = None, last_name: Optional[str] = None, **kw: Any) -> Json:
+        """BVN lookup. Names are optional; when sent they're compared with the record (field_matches). Also: dob, include_photo, reference, aml_screening, aml_monitoring."""
         return self._c._check("/identity/bvn", {"id_number": id_number, "first_name": first_name, "last_name": last_name, **kw})
 
-    def bvn_face_match(self, *, id_number: str, first_name: str, last_name: str, liveness_session_id: Optional[str] = None, selfie_image: Optional[ImageInput] = None, **kw: Any) -> Json:
+    def bvn_face_match(self, *, id_number: str, first_name: Optional[str] = None, last_name: Optional[str] = None, liveness_session_id: Optional[str] = None, selfie_image: Optional[ImageInput] = None, **kw: Any) -> Json:
         """BVN lookup + face match. Send liveness_session_id (recommended) or selfie_image (bytes or base64)."""
         return self._c._check("/identity/bvn/face-match", {"id_number": id_number, "first_name": first_name, "last_name": last_name, "liveness_session_id": liveness_session_id, "selfie_image": selfie_image, **kw})
 

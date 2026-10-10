@@ -27,6 +27,7 @@ async function routesTheSdkCovers() {
     u.kyc.createLink(), u.kyc.listLinks(), u.kyc.getLink('id-x'),
     u.address.verify({ address: 'x', state: 'Lagos' }), u.address.getCheck('id-x'), u.address.listChecks(),
     u.address.createLink({ address: 'x', state: 'Lagos' }), u.address.getLink('id-x'), u.address.listLinks(), u.address.simulateLink('id-x', { outcome: 'verified' }),
+    u.address.verifyDocument({ front_image: 'x', address: 'x', state: 'Lagos' }), u.address.getDocument('id-x'), u.address.listDocuments(),
   ]);
   return seen;
 }

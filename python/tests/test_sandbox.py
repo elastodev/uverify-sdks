@@ -39,6 +39,8 @@ class Sandbox(unittest.TestCase):
         self.assertIn("/address/", link["url"])
         done = self.u.address.simulate_link(link["id"], outcome="verified")
         self.assertEqual((done["status"], done["result"]), ("completed", "verified"))
+        bill = self.u.address.verify_document(front_image=JPEG, address="12 Admiralty Way, Lekki Phase 1", state="Lagos", name="Adaeze Okafor")
+        self.assertEqual(bill["status"], "verified")
         self.assertIsInstance(self.u.account.balance()["balance"], (int, float))
 
     def test_validation_error(self):

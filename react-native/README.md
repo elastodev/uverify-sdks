@@ -25,7 +25,7 @@ React Native 0.72+, `react-native-webview` 13+. iOS 14.3+ (camera inside web vie
 <uses-permission android:name="android.permission.CAMERA" />
 ```
 
-Using address links? Also add location: `NSLocationWhenInUseUsageDescription` (iOS) and `<uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />` (Android).
+Using address links? Also add location: `NSLocationWhenInUseUsageDescription` (iOS) and `<uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />` (Android). If the link asks for a proof of address, the customer photographs it in the page: add `NSPhotoLibraryUsageDescription` (iOS) for the gallery; react-native-webview handles the file picker.
 
 ## Use
 

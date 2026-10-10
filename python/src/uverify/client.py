@@ -302,7 +302,7 @@ class _Address(_Resource):
 
     def create_link(self, *, address: str, state: str, **params: Any) -> Json:
         """A link the customer opens at home to share their phone's location: send them link["url"].
-        Also: lga, customer_name, redirect_url, reference, sandbox_outcome."""
+        Also: lga, customer_name, redirect_url, require_document (also ask for a proof of address), reference, sandbox_outcome."""
         return self._c._create("/address/links", {"address": address, "state": state, **params}, "addrl")
 
     def get_link(self, id: str) -> Json:
@@ -311,6 +311,18 @@ class _Address(_Resource):
     def list_links(self, **params: Any) -> Json:
         """Filters: status (pending, completed, expired), page, per_page."""
         return self._c._request("GET", "/address/links", query=params)
+
+    def verify_document(self, *, front_image: ImageInput, address: str, state: str, **params: Any) -> Json:
+        """A utility bill, bank statement or tenancy agreement (bytes or base64), checked for the customer's
+        name, the address, its date and editing. Also: back_image, lga, name, max_age_days, reference, sandbox_outcome."""
+        return self._c._create("/address/documents", {"front_image": front_image, "address": address, "state": state, **params}, "addrd")
+
+    def get_document(self, id: str) -> Json:
+        return self._c._request("GET", f"/address/documents/{_q(id)}")
+
+    def list_documents(self, **params: Any) -> Json:
+        """Filters: status (verified, partial, failed, unreadable), page, per_page."""
+        return self._c._request("GET", "/address/documents", query=params)
 
     def simulate_link(self, id: str, *, outcome: str) -> Json:
         """Sandbox only: finish a link without a phone (verified, partial, failed or expired)."""

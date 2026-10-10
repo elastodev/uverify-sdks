@@ -274,6 +274,8 @@ export interface CreateAddressLinkParams {
   /** https:// URL the customer goes to when done; address_link_id, status and reference are appended. */
   redirect_url?: string;
   reference?: string;
+  /** After their location, the customer also photographs a proof of address (charged as its own check). */
+  require_document?: boolean;
   /** Sandbox only: the result sharing a location gives. */
   sandbox_outcome?: 'verified' | 'partial' | 'failed';
 }
@@ -291,9 +293,20 @@ export interface AddressLink {
   customer_name: string | null;
   address_check: { status: AddressCheck['status']; score: number; checks: AddressChecks };
   place: { formatted_address: string; latitude: number; longitude: number; precision: AddressPrecision | null; source: string; attribution?: string } | null;
-  location: { distance_m: number | null; accuracy_m: number | null; latitude: number | null; longitude: number | null; captured_at: string | null } | null;
+  location: {
+    distance_m: number | null;
+    accuracy_m: number | null;
+    /** The phone's own street, area or LGA was named in the address (checked when it was far from the map's pin). */
+    area_match: 'street' | 'area' | 'lga' | null;
+    latitude: number | null;
+    longitude: number | null;
+    captured_at: string | null;
+  } | null;
   reasons: string[];
   attempts: number;
+  require_document: boolean;
+  /** When asked for: the proof of address (fetch it with address.getDocument), or missing / unavailable. */
+  document: { id: string | null; status: AddressDocument['status'] | 'missing' | 'unavailable' | null } | null;
   redirect_url: string | null;
   expires_at: string;
   completed_at: string | null;
@@ -307,6 +320,56 @@ export interface AddressLink {
 
 export interface ListAddressLinksParams extends PageParams {
   status?: AddressLink['status'];
+}
+
+export interface VerifyAddressDocumentParams {
+  /** A photo or screenshot of the bill, statement or tenancy agreement (Buffer or base64; JPEG, PNG or WEBP). */
+  front_image: ImageInput;
+  /** A second page, if the name or address is on it. */
+  back_image?: ImageInput;
+  /** The address it should show. */
+  address: string;
+  state: string;
+  lga?: string;
+  /** The customer's full name, compared with the name on the document. */
+  name?: string;
+  /** How recent it must be, in days (default 92). */
+  max_age_days?: number;
+  reference?: string;
+  /** Sandbox only: the result to act out. */
+  sandbox_outcome?: 'verified' | 'address_mismatch' | 'name_mismatch' | 'too_old' | 'tampered' | 'unreadable';
+}
+
+/** A proof of address read and checked against the customer's name and address. */
+export interface AddressDocument {
+  id: string;
+  object: 'address_document';
+  reference: string;
+  environment: Environment;
+  /** unreadable is refunded: ask for a clearer photo. */
+  status: 'verified' | 'partial' | 'failed' | 'unreadable';
+  /** e.g. name_mismatch, address_partial, document_too_old, tampering_suspected. */
+  reasons: string[];
+  address: { address: string; lga: string | null; state: string } | null;
+  name: string | null;
+  checks: {
+    document_type: 'utility_bill' | 'bank_statement' | 'tenancy_agreement' | 'government_letter' | 'other';
+    name_match: { result: 'pass' | 'partial' | 'fail' | 'unknown' };
+    address_match: { result: 'pass' | 'partial' | 'fail'; score: number; state_on_document: boolean | null; lga_on_document: boolean | null };
+    recency: { result: 'pass' | 'fail' | 'unknown'; issue_date: string | null; age_days: number | null; max_age_days: number };
+    tampering_signals: string[];
+  } | null;
+  /** What was read off it. */
+  extracted: { document_type: string; issuer: string | null; name: string | null; address: string | null; issue_date: string | null } | null;
+  address_link_id: string | null;
+  data_deleted_at?: string;
+  amount_charged: number;
+  currency: 'NGN';
+  created_at: string;
+}
+
+export interface ListAddressDocumentsParams extends PageParams {
+  status?: AddressDocument['status'];
 }
 
 export interface SimulateAddressLinkParams {

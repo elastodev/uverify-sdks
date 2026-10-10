@@ -2,6 +2,7 @@ import { randomBytes } from 'node:crypto';
 import { UVerifyConnectionError, UVerifyError } from './errors.js';
 import type {
   AddressCheck,
+  AddressDocument,
   AddressLink,
   AmlMonitor,
   AmlScreening,
@@ -15,6 +16,7 @@ import type {
   ImageInput,
   KycLink,
   ListAddressChecksParams,
+  ListAddressDocumentsParams,
   ListAddressLinksParams,
   ListKycLinksParams,
   ListVerificationsParams,
@@ -31,6 +33,7 @@ import type {
   SimulateLivenessParams,
   Verification,
   VerifyDocumentParams,
+  VerifyAddressDocumentParams,
   VerifyAddressParams,
 } from './types.js';
 import { constructEvent, signPayload } from './webhooks.js';
@@ -313,6 +316,16 @@ class AddressResource extends Resource {
   }
   listLinks(params: ListAddressLinksParams = {}) {
     return this.client.request<Page<AddressLink>>('GET', '/address/links', { query: { ...params } });
+  }
+  /** A utility bill, bank statement or tenancy agreement, checked for the customer's name, the address, its date and editing. */
+  verifyDocument(params: VerifyAddressDocumentParams) {
+    return this.client.create<AddressDocument>('/address/documents', params, 'addrd');
+  }
+  getDocument(id: string) {
+    return this.client.request<AddressDocument>('GET', `/address/documents/${encodeURIComponent(id)}`);
+  }
+  listDocuments(params: ListAddressDocumentsParams = {}) {
+    return this.client.request<Page<AddressDocument>>('GET', '/address/documents', { query: { ...params } });
   }
   /** Sandbox only: finish a link without a phone. */
   simulateLink(id: string, params: SimulateAddressLinkParams) {

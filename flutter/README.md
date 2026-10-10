@@ -38,7 +38,7 @@ end
 <uses-permission android:name="android.permission.CAMERA" />
 ```
 
-Using address links? Also add `NSLocationWhenInUseUsageDescription` to `Info.plist` and `<uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />` to the manifest.
+Using address links? Also add `NSLocationWhenInUseUsageDescription` to `Info.plist` and `<uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />` to the manifest. If the link asks for a proof of address, the customer photographs it: add `NSPhotoLibraryUsageDescription` (iOS) for the gallery; `image_picker` handles the rest.
 
 ## Use
 

@@ -51,6 +51,7 @@ link = uverify.kyc.create_link(customer_name="Ada", require_document=True)   # s
 uverify.address.verify(address="12 Admiralty Way, Lekki Phase 1", lga="Eti-Osa", state="Lagos")  # on the map, in that LGA and state?
 home = uverify.address.create_link(address="12 Admiralty Way", state="Lagos", customer_name="Ada")
 # send home["url"]: they open it at home and share their phone's location; read result / location["distance_m"] later
+uverify.address.verify_document(front_image=open("bill.jpg", "rb").read(), address="12 Admiralty Way", state="Lagos", name="Adaeze Okafor")
 
 uverify.verifications.list(status="verified")
 uverify.account.balance()

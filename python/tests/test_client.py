@@ -182,6 +182,7 @@ class Contract(unittest.TestCase):
         u.kyc.create_link(); u.kyc.list_links(); u.kyc.get_link("id-x")
         u.address.verify(address="x", state="Lagos"); u.address.get_check("id-x"); u.address.list_checks()
         u.address.create_link(address="x", state="Lagos"); u.address.get_link("id-x"); u.address.list_links(); u.address.simulate_link("id-x", outcome="verified")
+        u.address.verify_document(front_image=b"x", address="x", state="Lagos"); u.address.get_document("id-x"); u.address.list_documents()
         self.assertEqual([r for r in routes if r not in seen], [])
 
 

@@ -47,6 +47,9 @@ run('sandbox (real API)', () => {
     const done = await u.address.simulateLink(l.id, { outcome: 'verified' });
     expect(done.status).toBe('completed');
     expect(done.result).toBe('verified');
+    const bill = await u.address.verifyDocument({ front_image: JPEG, address: '12 Admiralty Way, Lekki Phase 1', state: 'Lagos', name: 'Adaeze Okafor' });
+    expect(bill.status).toBe('verified');
+    expect((await u.address.verifyDocument({ front_image: JPEG, address: '12 Admiralty Way', state: 'Lagos', sandbox_outcome: 'name_mismatch', name: 'Adaeze Okafor' })).status).toBe('failed');
   });
 
   it('validation errors come back as UVerifyError', async () => {

@@ -36,6 +36,9 @@
     "POST /address/links",
     "GET /address/links",
     "GET /address/links/{id}",
-    "POST /address/links/{id}/simulate"
+    "POST /address/links/{id}/simulate",
+    "POST /address/documents",
+    "GET /address/documents",
+    "GET /address/documents/{id}"
   ]
 }

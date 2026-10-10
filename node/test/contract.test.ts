@@ -25,6 +25,8 @@ async function routesTheSdkCovers() {
     u.aml.screen({ name: 'A B' }), u.aml.getScreening('id-x'), u.aml.lists(),
     u.aml.monitors.create({ name: 'A B' }), u.aml.monitors.list(), u.aml.monitors.get('id-x'), u.aml.monitors.stop('id-x'),
     u.kyc.createLink(), u.kyc.listLinks(), u.kyc.getLink('id-x'),
+    u.address.verify({ address: 'x', state: 'Lagos' }), u.address.getCheck('id-x'), u.address.listChecks(),
+    u.address.createLink({ address: 'x', state: 'Lagos' }), u.address.getLink('id-x'), u.address.listLinks(), u.address.simulateLink('id-x', { outcome: 'verified' }),
   ]);
   return seen;
 }

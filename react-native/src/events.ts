@@ -5,6 +5,8 @@
 export type UVerifyResult =
   | { type: 'liveness'; sessionId: string; status: 'passed' | 'failed' | 'expired' }
   | { type: 'kyc'; id: string; status: string; outcome: string | null }
+  /** An address link: fetch it on your server for the distance and details. */
+  | { type: 'address'; id: string; status: 'completed' | 'expired'; result: 'verified' | 'partial' | 'failed' | null }
   | { type: 'redirect'; url: string; params: Record<string, string> };
 
 /** The hosted page's "finished" message (posted by uverify.com.ng), or null if it's something else. */
@@ -18,6 +20,7 @@ export function parseMessage(data: string): UVerifyResult | null {
   if (m?.source !== 'uverify') return null;
   if (m.type === 'liveness.finished' && typeof m.session_id === 'string') return { type: 'liveness', sessionId: m.session_id, status: m.status };
   if (m.type === 'kyc.finished' && typeof m.id === 'string') return { type: 'kyc', id: m.id, status: m.status, outcome: m.outcome ?? null };
+  if (m.type === 'address.finished' && typeof m.id === 'string') return { type: 'address', id: m.id, status: m.status, result: m.result ?? null };
   return null;
 }
 
@@ -33,6 +36,11 @@ export function parseRedirect(url: string, redirectUrl: string | undefined): UVe
     params[decodeURIComponent(k)] = decodeURIComponent(v.replace(/\+/g, ' '));
   }
   return { type: 'redirect', url, params };
+}
+
+/** An address link (/address/<id>) needs the phone's location; everything else needs the camera. */
+export function needsLocation(url: string): boolean {
+  return /^https:\/\/[^/]+\/address\//i.test(url);
 }
 
 /** Only UVerify's pages (and about:blank) load in the view; anything else is refused. */

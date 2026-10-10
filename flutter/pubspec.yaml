@@ -1,6 +1,6 @@
 name: uverify_liveness
-description: UVerify's face check (liveness) and verification links inside a Flutter app, for identity verification in Nigeria.
-version: 0.1.0
+description: UVerify's face check (liveness), verification links and address links inside a Flutter app, for identity verification in Nigeria.
+version: 0.2.0
 homepage: https://uverify.com.ng/docs
 repository: https://github.com/elastodev/uverify-sdks/tree/main/flutter
 topics: [kyc, liveness, face-verification, identity, nigeria]
@@ -13,6 +13,7 @@ dependencies:
   flutter:
     sdk: flutter
   webview_flutter: ^4.8.0
+  webview_flutter_android: ">=3.16.0 <5.0.0"
   webview_flutter_wkwebview: ^3.14.0
   permission_handler: ">=11.3.0 <14.0.0"
 

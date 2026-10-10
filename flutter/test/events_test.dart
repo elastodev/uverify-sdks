@@ -13,6 +13,19 @@ void main() {
       final k = parseMessage(jsonEncode({'source': 'uverify', 'type': 'kyc.finished', 'id': 'k1', 'status': 'completed', 'outcome': 'verified'}));
       expect((k as KycResult).outcome, 'verified');
     });
+    test('address-link results', () {
+      final a = parseMessage(jsonEncode({'source': 'uverify', 'type': 'address.finished', 'id': 'a1', 'status': 'completed', 'result': 'partial'}));
+      expect((a as AddressResult).id, 'a1');
+      expect(a.status, 'completed');
+      expect(a.result, 'partial');
+      final e = parseMessage(jsonEncode({'source': 'uverify', 'type': 'address.finished', 'id': 'a1', 'status': 'expired'}));
+      expect((e as AddressResult).result, isNull);
+    });
+    test('an address link needs location, not the camera', () {
+      expect(needsLocation('https://uverify.com.ng/address/a1#tok'), isTrue);
+      expect(needsLocation('https://uverify.com.ng/liveness/s1#tok'), isFalse);
+      expect(needsLocation('https://uverify.com.ng/kyc/k1#tok'), isFalse);
+    });
     test('ignores anything else', () {
       expect(parseMessage('not json'), isNull);
       expect(parseMessage(jsonEncode({'type': 'liveness.finished', 'session_id': 's1'})), isNull);

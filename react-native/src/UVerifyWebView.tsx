@@ -1,32 +1,35 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { ActivityIndicator, BackHandler, PermissionsAndroid, Platform, StyleSheet, Text, View, type StyleProp, type ViewStyle } from 'react-native';
 import { WebView, type WebViewMessageEvent, type WebViewNavigation } from 'react-native-webview';
-import { isAllowed, parseMessage, parseRedirect, type UVerifyResult } from './events';
+import { isAllowed, needsLocation, parseMessage, parseRedirect, type UVerifyResult } from './events';
 
 export interface UVerifyWebViewProps {
-  /** A liveness session's `url`, or a verification link's `url` (from your server, via the UVerify API). */
+  /** A liveness session's, verification link's or address link's `url` (from your server, via the UVerify API). */
   url: string;
   /** The redirect_url you created the session/link with, if any: reaching it also finishes. */
   redirectUrl?: string;
   /** The flow finished. For liveness, pass `result.sessionId` to your server for the face match. */
   onFinish: (result: UVerifyResult) => void;
-  /** The person backed out (Android back button) or refused the camera. */
-  onCancel?: (reason: 'back' | 'camera_denied') => void;
+  /** The person backed out (Android back button), or refused the camera (location, for an address link). */
+  onCancel?: (reason: 'back' | 'camera_denied' | 'location_denied') => void;
   /** Extra hosts to allow (default: uverify.com.ng and its subdomains). */
   allowedHosts?: string[];
   style?: StyleProp<ViewStyle>;
 }
 
 /**
- * UVerify's hosted face check (or a verification link) inside your app. The
- * check itself runs on UVerify's page, the same one customers get in a
- * browser, so every anti-spoofing layer applies and improvements reach your
+ * UVerify's hosted face check, verification link or address link inside your
+ * app. The check itself runs on UVerify's page, the same one customers get in
+ * a browser, so every anti-spoofing layer applies and improvements reach your
  * app without an update.
  *
- * Needs the camera permission: add NSCameraUsageDescription to Info.plist and
- * <uses-permission android:name="android.permission.CAMERA" /> to AndroidManifest.xml.
+ * Face checks need the camera: NSCameraUsageDescription in Info.plist and
+ * <uses-permission android:name="android.permission.CAMERA" /> in AndroidManifest.xml.
+ * Address links need the location: NSLocationWhenInUseUsageDescription and
+ * <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />.
  */
 export function UVerifyWebView({ url, redirectUrl, onFinish, onCancel, allowedHosts = [], style }: UVerifyWebViewProps) {
+  const location = needsLocation(url);
   const [cameraOk, setCameraOk] = useState(Platform.OS !== 'android');
   const [denied, setDenied] = useState(false);
   const done = useRef(false);
@@ -41,17 +44,17 @@ export function UVerifyWebView({ url, redirectUrl, onFinish, onCancel, allowedHo
     [onFinish],
   );
 
-  // Android: ask for the camera before the page does (the web view can only use it if the app has it).
+  // Android: ask for the camera (or location) before the page does: the web view can only use it if the app has it.
   useEffect(() => {
     if (Platform.OS !== 'android') return;
-    PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.CAMERA).then((r) => {
+    PermissionsAndroid.request(location ? PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION : PermissionsAndroid.PERMISSIONS.CAMERA).then((r) => {
       if (r === PermissionsAndroid.RESULTS.GRANTED) setCameraOk(true);
       else {
         setDenied(true);
-        onCancel?.('camera_denied');
+        onCancel?.(location ? 'location_denied' : 'camera_denied');
       }
     });
-  }, [onCancel]);
+  }, [onCancel, location]);
 
   useEffect(() => {
     const sub = BackHandler.addEventListener('hardwareBackPress', () => {
@@ -80,7 +83,9 @@ export function UVerifyWebView({ url, redirectUrl, onFinish, onCancel, allowedHo
   if (denied) {
     return (
       <View style={[styles.center, style]}>
-        <Text style={styles.text}>Camera access is needed for the face check. Allow it in Settings, then try again.</Text>
+        <Text style={styles.text}>
+          {location ? 'Location access is needed to confirm your address. Allow it in Settings, then try again.' : 'Camera access is needed for the face check. Allow it in Settings, then try again.'}
+        </Text>
       </View>
     );
   }
@@ -105,6 +110,8 @@ export function UVerifyWebView({ url, redirectUrl, onFinish, onCancel, allowedHo
       mediaPlaybackRequiresUserAction={false}
       mediaCapturePermissionGrantType="grant"
       // Android: react-native-webview passes the page's camera request through once the app holds CAMERA (asked above).
+      // Location (address links): Android web views only share it when enabled; iOS asks with the app's own permission.
+      geolocationEnabled={location}
       setSupportMultipleWindows={false}
       startInLoadingState
       renderLoading={() => (

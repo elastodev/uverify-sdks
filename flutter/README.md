@@ -38,6 +38,8 @@ end
 <uses-permission android:name="android.permission.CAMERA" />
 ```
 
+Using address links? Also add `NSLocationWhenInUseUsageDescription` to `Info.plist` and `<uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />` to the manifest.
+
 ## Use
 
 Your **server** creates the session with a UVerify server SDK and returns its `url`. Never put your API key in the app.
@@ -76,6 +78,10 @@ UVerifyLivenessView(url: session.url, onResult: (result) { /* ... */ })
 ### Verification links
 
 The same view opens a verification link (`link.url` from `kyc.createLink`); the result is a `KycResult` with `id`, `status` and `outcome`.
+
+### Address links
+
+It also opens an address link (`link.url` from `address.createLink`), where the customer shares their phone's location at home. The view asks for location instead of the camera, and the result is an `AddressResult` with `id`, `status` and `result` (`verified`, `partial` or `failed`). Read the distance and details on your server with `address.getLink(id)`. A refused location comes back as `UVerifyCancelled('location_denied')`.
 
 ### Options
 

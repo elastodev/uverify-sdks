@@ -54,6 +54,10 @@ await uverify.aml.monitors.create({ name: 'Adaeze Okafor' });                // 
 
 const link = await uverify.kyc.createLink({ customer_name: 'Ada', require_document: true }); // no-code: send link.url
 
+await uverify.address.verify({ address: '12 Admiralty Way, Lekki Phase 1', lga: 'Eti-Osa', state: 'Lagos' }); // on the map, in that LGA and state?
+const home = await uverify.address.createLink({ address: '12 Admiralty Way', state: 'Lagos', customer_name: 'Ada' });
+// send home.url: they open it at home and share their phone's location; read home.result / location.distance_m later
+
 await uverify.verifications.list({ status: 'verified' });
 await uverify.account.balance();
 ```

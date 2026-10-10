@@ -13,7 +13,7 @@ namespace UVerify;
  */
 final class UVerify
 {
-    public const VERSION = '0.1.0';
+    public const VERSION = '0.2.0';
     private const DEFAULT_BASE_URL = 'https://api.uverify.com.ng/v1';
     private const IMAGE_FIELDS = ['selfie_image', 'front_image', 'back_image'];
 
@@ -23,6 +23,7 @@ final class UVerify
     public readonly Resources\Liveness $liveness;
     public readonly Resources\Documents $documents;
     public readonly Resources\Aml $aml;
+    public readonly Resources\Address $address;
     public readonly Resources\Kyc $kyc;
     public readonly Resources\Account $account;
 
@@ -51,6 +52,7 @@ final class UVerify
         $this->liveness = new Resources\Liveness($this);
         $this->documents = new Resources\Documents($this);
         $this->aml = new Resources\Aml($this);
+        $this->address = new Resources\Address($this);
         $this->kyc = new Resources\Kyc($this);
         $this->account = new Resources\Account($this);
     }

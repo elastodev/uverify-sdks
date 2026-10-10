@@ -180,6 +180,8 @@ class Contract(unittest.TestCase):
         u.aml.screen(name="A B"); u.aml.get_screening("id-x"); u.aml.lists()
         u.aml.monitors.create(name="A B"); u.aml.monitors.list(); u.aml.monitors.get("id-x"); u.aml.monitors.stop("id-x")
         u.kyc.create_link(); u.kyc.list_links(); u.kyc.get_link("id-x")
+        u.address.verify(address="x", state="Lagos"); u.address.get_check("id-x"); u.address.list_checks()
+        u.address.create_link(address="x", state="Lagos"); u.address.get_link("id-x"); u.address.list_links(); u.address.simulate_link("id-x", outcome="verified")
         self.assertEqual([r for r in routes if r not in seen], [])
 
 

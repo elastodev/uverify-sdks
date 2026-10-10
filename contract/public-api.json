@@ -29,6 +29,13 @@
     "DELETE /aml/monitors/{id}",
     "POST /kyc/requests",
     "GET /kyc/requests",
-    "GET /kyc/requests/{id}"
+    "GET /kyc/requests/{id}",
+    "POST /address/verify",
+    "GET /address/checks",
+    "GET /address/checks/{id}",
+    "POST /address/links",
+    "GET /address/links",
+    "GET /address/links/{id}",
+    "POST /address/links/{id}/simulate"
   ]
 }

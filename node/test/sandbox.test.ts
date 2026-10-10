@@ -38,6 +38,17 @@ run('sandbox (real API)', () => {
     expect((await u.account.pricing()).length).toBeGreaterThan(5);
   });
 
+  it('address check and address link', async () => {
+    const c = await u.address.verify({ address: '12 Admiralty Way, Lekki Phase 1', lga: 'Eti-Osa', state: 'Lagos' });
+    expect(c.status).toBe('verified');
+    expect((await u.address.verify({ address: '1 Test Street', state: 'Lagos', sandbox_outcome: 'not_found' })).status).toBe('failed');
+    const l = await u.address.createLink({ address: '12 Admiralty Way', state: 'Lagos', customer_name: 'SDK Test' });
+    expect(l.url).toMatch(/\/address\//);
+    const done = await u.address.simulateLink(l.id, { outcome: 'verified' });
+    expect(done.status).toBe('completed');
+    expect(done.result).toBe('verified');
+  });
+
   it('validation errors come back as UVerifyError', async () => {
     const e = await u.identity.nin({ id_number: 'abc' }).catch((x) => x);
     expect(e).toBeInstanceOf(UVerifyError);

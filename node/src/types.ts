@@ -212,6 +212,107 @@ export interface AmlScreening {
 
 export type MonitorParams = Omit<ScreenParams, 'monitor'>;
 
+export interface VerifyAddressParams {
+  /** House number and street, with the area or town, e.g. "12 Admiralty Way, Lekki Phase 1". */
+  address: string;
+  /** A Nigerian state or FCT, e.g. "Lagos". */
+  state: string;
+  /** Local government area, e.g. "Eti-Osa". Optional, but it sharpens the check. */
+  lga?: string;
+  reference?: string;
+  /** Sandbox only: the result to get back. */
+  sandbox_outcome?: 'verified' | 'partial' | 'not_found' | 'state_mismatch';
+}
+
+export type AddressPrecision = 'building' | 'street' | 'area' | 'region';
+
+export interface AddressChecks {
+  address_found: { result: 'pass' | 'fail'; precision: AddressPrecision | null };
+  state_match: { result: 'pass' | 'fail'; found: string | null };
+  lga_match: { result: 'pass' | 'fail' | 'unknown'; found: string | null };
+}
+
+/** An address found on the map and scored. */
+export interface AddressCheck {
+  id: string;
+  reference: string;
+  environment: Environment;
+  /** verified (score 75+), partial (45–74) or failed. */
+  status: 'verified' | 'partial' | 'failed';
+  score: number;
+  address: { address: string; lga: string | null; state: string } | null;
+  checks: AddressChecks;
+  /** e.g. address_not_found, state_mismatch, lga_mismatch, only_area_found. */
+  reasons: string[];
+  location: {
+    formatted_address: string;
+    latitude: number;
+    longitude: number;
+    precision: AddressPrecision | null;
+    partial_match: boolean;
+    source: 'openstreetmap' | 'google' | 'sandbox';
+    /** Show it wherever you display an OpenStreetMap result. */
+    attribution?: string;
+  } | null;
+  data_deleted_at?: string;
+  amount_charged: number;
+  currency: 'NGN';
+  created_at: string;
+}
+
+export interface ListAddressChecksParams extends PageParams {
+  status?: AddressCheck['status'];
+}
+
+export interface CreateAddressLinkParams {
+  /** Must be findable on the map, or the API answers 422 and no link is made. */
+  address: string;
+  state: string;
+  lga?: string;
+  /** Greets the customer on the page. */
+  customer_name?: string;
+  /** https:// URL the customer goes to when done; address_link_id, status and reference are appended. */
+  redirect_url?: string;
+  reference?: string;
+  /** Sandbox only: the result sharing a location gives. */
+  sandbox_outcome?: 'verified' | 'partial' | 'failed';
+}
+
+/** A link the customer opens at home to share their phone's location, compared with the address. */
+export interface AddressLink {
+  id: string;
+  object: 'address_link';
+  reference: string;
+  environment: Environment;
+  status: 'pending' | 'completed' | 'expired';
+  /** Once completed: the weaker of the address check and the location check. */
+  result: 'verified' | 'partial' | 'failed' | null;
+  address: { address: string; lga: string | null; state: string } | null;
+  customer_name: string | null;
+  address_check: { status: AddressCheck['status']; score: number; checks: AddressChecks };
+  place: { formatted_address: string; latitude: number; longitude: number; precision: AddressPrecision | null; source: string; attribution?: string } | null;
+  location: { distance_m: number | null; accuracy_m: number | null; latitude: number | null; longitude: number | null; captured_at: string | null } | null;
+  reasons: string[];
+  attempts: number;
+  redirect_url: string | null;
+  expires_at: string;
+  completed_at: string | null;
+  data_deleted_at?: string;
+  amount_charged: number;
+  currency: 'NGN';
+  created_at: string;
+  /** Only on create: the link to send the customer (its token is in the #fragment). */
+  url?: string;
+}
+
+export interface ListAddressLinksParams extends PageParams {
+  status?: AddressLink['status'];
+}
+
+export interface SimulateAddressLinkParams {
+  outcome: 'verified' | 'partial' | 'failed' | 'expired';
+}
+
 export interface AmlMonitor {
   id: string;
   reference: string;
@@ -310,7 +411,7 @@ export interface Price {
 
 // ─── Webhooks ──────────────────────────────────────────────────────────────
 
-export type WebhookEventType = 'verification.completed' | 'liveness.completed' | 'kyc.completed' | 'document.completed' | 'aml.match_found' | 'webhook.test';
+export type WebhookEventType = 'verification.completed' | 'liveness.completed' | 'kyc.completed' | 'document.completed' | 'aml.match_found' | 'address.completed' | 'webhook.test';
 
 export interface WebhookEvent<T = unknown> {
   /** Unique per event; deliveries can repeat, so dedupe on it. */

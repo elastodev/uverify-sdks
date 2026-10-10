@@ -1,10 +1,19 @@
 import { describe, expect, it } from 'vitest';
-import { isAllowed, parseMessage, parseRedirect } from '../src/events';
+import { isAllowed, needsLocation, parseMessage, parseRedirect } from '../src/events';
 
 describe('messages from the hosted page', () => {
   it('reads liveness and verification-link results', () => {
     expect(parseMessage(JSON.stringify({ source: 'uverify', type: 'liveness.finished', session_id: 's1', status: 'passed' }))).toEqual({ type: 'liveness', sessionId: 's1', status: 'passed' });
     expect(parseMessage(JSON.stringify({ source: 'uverify', type: 'kyc.finished', id: 'k1', status: 'completed', outcome: 'verified' }))).toEqual({ type: 'kyc', id: 'k1', status: 'completed', outcome: 'verified' });
+  });
+  it('reads address-link results', () => {
+    expect(parseMessage(JSON.stringify({ source: 'uverify', type: 'address.finished', id: 'a1', status: 'completed', result: 'partial' }))).toEqual({ type: 'address', id: 'a1', status: 'completed', result: 'partial' });
+    expect(parseMessage(JSON.stringify({ source: 'uverify', type: 'address.finished', id: 'a1', status: 'expired' }))).toEqual({ type: 'address', id: 'a1', status: 'expired', result: null });
+  });
+  it('knows an address link needs location, not the camera', () => {
+    expect(needsLocation('https://uverify.com.ng/address/a1#tok')).toBe(true);
+    expect(needsLocation('https://uverify.com.ng/liveness/s1#tok')).toBe(false);
+    expect(needsLocation('https://uverify.com.ng/kyc/k1#tok')).toBe(false);
   });
   it('ignores anything else', () => {
     expect(parseMessage('not json')).toBeNull();

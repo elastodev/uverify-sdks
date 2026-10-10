@@ -1,6 +1,6 @@
 {
   "name": "@uverifyng/react-native-liveness",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "UVerify's face check (liveness) and verification links inside a React Native app.",
   "license": "MIT",
   "author": "Elasto Web Services Limited",

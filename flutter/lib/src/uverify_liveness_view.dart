@@ -3,16 +3,18 @@ import 'dart:io' show Platform;
 import 'package:flutter/material.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:webview_flutter/webview_flutter.dart';
+import 'package:webview_flutter_android/webview_flutter_android.dart';
 import 'package:webview_flutter_wkwebview/webview_flutter_wkwebview.dart';
 
 import 'events.dart';
 
-/// UVerify's hosted face check (or a verification link) inside your app.
+/// UVerify's hosted face check, verification link or address link inside your app.
 ///
 /// The check runs on UVerify's page, the same one customers get in a browser,
 /// so every anti-spoofing layer applies and improvements reach your app
-/// without an update. Needs NSCameraUsageDescription (iOS) and the CAMERA
-/// permission (Android).
+/// without an update. Face checks need NSCameraUsageDescription (iOS) and the
+/// CAMERA permission (Android); address links need
+/// NSLocationWhenInUseUsageDescription and ACCESS_FINE_LOCATION instead.
 class UVerifyLivenessView extends StatefulWidget {
   const UVerifyLivenessView({
     super.key,
@@ -22,7 +24,7 @@ class UVerifyLivenessView extends StatefulWidget {
     this.allowedHosts = const [],
   });
 
-  /// A liveness session's `url`, or a verification link's `url`, from your server.
+  /// A liveness session's, verification link's or address link's `url`, from your server.
   final String url;
 
   /// The redirect_url you created it with, if any: reaching it also finishes.
@@ -42,6 +44,7 @@ class _UVerifyLivenessViewState extends State<UVerifyLivenessView> {
   WebViewController? _controller;
   bool _denied = false;
   bool _done = false;
+  late final bool _location = needsLocation(widget.url);
 
   List<String> get _hosts => ['uverify.com.ng', ...widget.allowedHosts.map((h) => h.toLowerCase())];
 
@@ -58,12 +61,12 @@ class _UVerifyLivenessViewState extends State<UVerifyLivenessView> {
   }
 
   Future<void> _start() async {
-    // Android: the web view can only use the camera if the app holds the permission.
+    // Android: the web view can only use the camera (or location) if the app holds the permission.
     if (Platform.isAndroid) {
-      final status = await Permission.camera.request();
+      final status = await (_location ? Permission.locationWhenInUse : Permission.camera).request();
       if (!status.isGranted) {
         if (mounted) setState(() => _denied = true);
-        _finish(const UVerifyCancelled('camera_denied'));
+        _finish(UVerifyCancelled(_location ? 'location_denied' : 'camera_denied'));
         return;
       }
     }
@@ -90,16 +93,26 @@ class _UVerifyLivenessViewState extends State<UVerifyLivenessView> {
         return isAllowed(req.url, _hosts) ? NavigationDecision.navigate : NavigationDecision.prevent;
       }))
       ..loadRequest(Uri.parse(widget.url));
+    // Android: a page's location request goes nowhere unless the app answers it (address links only).
+    final platform = controller.platform;
+    if (_location && platform is AndroidWebViewController) {
+      await platform.setGeolocationPermissionsPromptCallbacks(
+        onShowPrompt: (request) async => const GeolocationPermissionsResponse(allow: true, retain: false),
+      );
+    }
     if (mounted) setState(() => _controller = controller);
   }
 
   @override
   Widget build(BuildContext context) {
     if (_denied) {
-      return const Center(
+      return Center(
         child: Padding(
-          padding: EdgeInsets.all(24),
-          child: Text('Camera access is needed for the face check. Allow it in Settings, then try again.', textAlign: TextAlign.center),
+          padding: const EdgeInsets.all(24),
+          child: Text(
+            _location ? 'Location access is needed to confirm your address. Allow it in Settings, then try again.' : 'Camera access is needed for the face check. Allow it in Settings, then try again.',
+            textAlign: TextAlign.center,
+          ),
         ),
       );
     }
@@ -119,7 +132,7 @@ class UVerifyLiveness {
   UVerifyLiveness._();
 
   /// Returns a [LivenessResult] (send its sessionId to your server), a
-  /// [KycResult], a [RedirectResult], or [UVerifyCancelled].
+  /// [KycResult], an [AddressResult], a [RedirectResult], or [UVerifyCancelled].
   static Future<UVerifyResult> start(BuildContext context, {required String url, String? redirectUrl, List<String> allowedHosts = const [], String title = 'Verify your identity'}) async {
     final result = await Navigator.of(context).push<UVerifyResult>(
       MaterialPageRoute(

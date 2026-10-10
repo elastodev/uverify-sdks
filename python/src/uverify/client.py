@@ -15,7 +15,7 @@ from typing import Any, Callable, Dict, Optional, Tuple, Union
 from . import webhooks as _webhooks
 from .errors import UVerifyConnectionError, UVerifyError
 
-VERSION = "0.1.1"
+VERSION = "0.2.0"
 DEFAULT_BASE_URL = "https://api.uverify.com.ng/v1"
 IMAGE_FIELDS = ("selfie_image", "front_image", "back_image")
 
@@ -88,6 +88,7 @@ class UVerify:
         self.liveness = _Liveness(self)
         self.documents = _Documents(self)
         self.aml = _Aml(self)
+        self.address = _Address(self)
         self.kyc = _Kyc(self)
         self.account = _Account(self)
 
@@ -285,6 +286,35 @@ class _Aml(_Resource):
 
     def lists(self) -> Any:
         return self._c._request("GET", "/aml/lists")
+
+
+class _Address(_Resource):
+    def verify(self, *, address: str, state: str, **params: Any) -> Json:
+        """Is the address real, and in the LGA and state given? Found on the map and scored. Also: lga, reference, sandbox_outcome."""
+        return self._c._create("/address/verify", {"address": address, "state": state, **params}, "addr")
+
+    def get_check(self, id: str) -> Json:
+        return self._c._request("GET", f"/address/checks/{_q(id)}")
+
+    def list_checks(self, **params: Any) -> Json:
+        """Filters: status (verified, partial, failed), page, per_page."""
+        return self._c._request("GET", "/address/checks", query=params)
+
+    def create_link(self, *, address: str, state: str, **params: Any) -> Json:
+        """A link the customer opens at home to share their phone's location: send them link["url"].
+        Also: lga, customer_name, redirect_url, reference, sandbox_outcome."""
+        return self._c._create("/address/links", {"address": address, "state": state, **params}, "addrl")
+
+    def get_link(self, id: str) -> Json:
+        return self._c._request("GET", f"/address/links/{_q(id)}")
+
+    def list_links(self, **params: Any) -> Json:
+        """Filters: status (pending, completed, expired), page, per_page."""
+        return self._c._request("GET", "/address/links", query=params)
+
+    def simulate_link(self, id: str, *, outcome: str) -> Json:
+        """Sandbox only: finish a link without a phone (verified, partial, failed or expired)."""
+        return self._c._request("POST", f"/address/links/{_q(id)}/simulate", body={"outcome": outcome})
 
 
 class _Kyc(_Resource):

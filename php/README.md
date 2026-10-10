@@ -41,6 +41,8 @@ $uverify->business->cac(['id_number' => 'RC123456', 'aml_screening' => true]);
 $uverify->documents->verify(['front_image' => new \SplFileInfo('nin.jpg'), 'document_type' => 'nin_card']);
 $uverify->aml->screen(['name' => 'Adaeze Okafor', 'date_of_birth' => '1990-01-15']);
 $uverify->aml->monitors->create(['name' => 'Adaeze Okafor']);
+$uverify->address->verify(['address' => '12 Admiralty Way, Lekki Phase 1', 'lga' => 'Eti-Osa', 'state' => 'Lagos']);
+$home = $uverify->address->createLink(['address' => '12 Admiralty Way', 'state' => 'Lagos', 'customer_name' => 'Ada']); // send $home['url']
 $link = $uverify->kyc->createLink(['customer_name' => 'Ada', 'require_document' => true]); // send $link['url']
 $uverify->verifications->list(['status' => 'verified']);
 $uverify->account->balance();

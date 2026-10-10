@@ -32,6 +32,13 @@ class Sandbox(unittest.TestCase):
         self.assertEqual(self.u.aml.screen(name="Adaeze Okafor")["status"], "clear")
         link = self.u.kyc.create_link(customer_name="SDK Test")
         self.assertEqual(self.u.kyc.get_link(link["id"])["status"], "pending")
+
+    def test_address(self):
+        self.assertEqual(self.u.address.verify(address="12 Admiralty Way, Lekki Phase 1", lga="Eti-Osa", state="Lagos")["status"], "verified")
+        link = self.u.address.create_link(address="12 Admiralty Way", state="Lagos", customer_name="SDK Test")
+        self.assertIn("/address/", link["url"])
+        done = self.u.address.simulate_link(link["id"], outcome="verified")
+        self.assertEqual((done["status"], done["result"]), ("completed", "verified"))
         self.assertIsInstance(self.u.account.balance()["balance"], (int, float))
 
     def test_validation_error(self):

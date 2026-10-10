@@ -1,16 +1,21 @@
 import { randomBytes } from 'node:crypto';
 import { UVerifyConnectionError, UVerifyError } from './errors.js';
 import type {
+  AddressCheck,
+  AddressLink,
   AmlMonitor,
   AmlScreening,
   Balance,
   CacCheckParams,
+  CreateAddressLinkParams,
   CreateKycLinkParams,
   CreateLivenessParams,
   FaceInput,
   IdDocument,
   ImageInput,
   KycLink,
+  ListAddressChecksParams,
+  ListAddressLinksParams,
   ListKycLinksParams,
   ListVerificationsParams,
   LivenessSession,
@@ -22,13 +27,15 @@ import type {
   Price,
   SanctionsList,
   ScreenParams,
+  SimulateAddressLinkParams,
   SimulateLivenessParams,
   Verification,
   VerifyDocumentParams,
+  VerifyAddressParams,
 } from './types.js';
 import { constructEvent, signPayload } from './webhooks.js';
 
-export const VERSION = '0.1.1';
+export const VERSION = '0.2.0';
 const DEFAULT_BASE_URL = 'https://api.uverify.com.ng/v1';
 
 export interface UVerifyOptions {
@@ -76,6 +83,7 @@ export class UVerify {
   readonly liveness: LivenessResource;
   readonly documents: DocumentsResource;
   readonly aml: AmlResource;
+  readonly address: AddressResource;
   readonly kyc: KycResource;
   readonly account: AccountResource;
   static readonly webhooks = { constructEvent, signPayload };
@@ -103,6 +111,7 @@ export class UVerify {
     this.liveness = new LivenessResource(this);
     this.documents = new DocumentsResource(this);
     this.aml = new AmlResource(this);
+    this.address = new AddressResource(this);
     this.kyc = new KycResource(this);
     this.account = new AccountResource(this);
   }
@@ -281,6 +290,33 @@ class AmlMonitorsResource extends Resource {
   /** Stop watching a name. */
   stop(id: string) {
     return this.client.request<AmlMonitor>('DELETE', `/aml/monitors/${encodeURIComponent(id)}`, { retryable: true });
+  }
+}
+
+class AddressResource extends Resource {
+  /** Is the address real, and in the LGA and state given? Found on the map and scored, instantly. */
+  verify(params: VerifyAddressParams) {
+    return this.client.create<AddressCheck>('/address/verify', params, 'addr');
+  }
+  getCheck(id: string) {
+    return this.client.request<AddressCheck>('GET', `/address/checks/${encodeURIComponent(id)}`);
+  }
+  listChecks(params: ListAddressChecksParams = {}) {
+    return this.client.request<Page<AddressCheck>>('GET', '/address/checks', { query: { ...params } });
+  }
+  /** A link the customer opens at home to share their phone's location. Send them `link.url`. */
+  createLink(params: CreateAddressLinkParams) {
+    return this.client.create<AddressLink>('/address/links', params, 'addrl');
+  }
+  getLink(id: string) {
+    return this.client.request<AddressLink>('GET', `/address/links/${encodeURIComponent(id)}`);
+  }
+  listLinks(params: ListAddressLinksParams = {}) {
+    return this.client.request<Page<AddressLink>>('GET', '/address/links', { query: { ...params } });
+  }
+  /** Sandbox only: finish a link without a phone. */
+  simulateLink(id: string, params: SimulateAddressLinkParams) {
+    return this.client.request<AddressLink>('POST', `/address/links/${encodeURIComponent(id)}/simulate`, { body: { ...params } });
   }
 }
 

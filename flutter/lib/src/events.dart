@@ -22,6 +22,18 @@ class KycResult extends UVerifyResult {
   final String? outcome;
 }
 
+/// An address link finished. Fetch it on your server (address.getLink) for the distance and details.
+class AddressResult extends UVerifyResult {
+  const AddressResult(this.id, this.status, this.result);
+  final String id;
+
+  /// completed or expired.
+  final String status;
+
+  /// verified, partial or failed (null when expired).
+  final String? result;
+}
+
 /// The page sent the person to your redirect_url.
 class RedirectResult extends UVerifyResult {
   const RedirectResult(this.url, this.params);
@@ -29,11 +41,11 @@ class RedirectResult extends UVerifyResult {
   final Map<String, String> params;
 }
 
-/// The person closed the view, pressed back, or refused the camera.
+/// The person closed the view, pressed back, or refused the camera (location, for an address link).
 class UVerifyCancelled extends UVerifyResult {
   const UVerifyCancelled(this.reason);
 
-  /// closed, back or camera_denied.
+  /// closed, back, camera_denied or location_denied.
   final String reason;
 }
 
@@ -52,7 +64,16 @@ UVerifyResult? parseMessage(String data) {
   if (m['type'] == 'kyc.finished' && m['id'] is String) {
     return KycResult(m['id'] as String, '${m['status']}', m['outcome'] as String?);
   }
+  if (m['type'] == 'address.finished' && m['id'] is String) {
+    return AddressResult(m['id'] as String, '${m['status']}', m['result'] as String?);
+  }
   return null;
+}
+
+/// An address link (`/address/<id>`) needs the phone's location; everything else needs the camera.
+bool needsLocation(String url) {
+  final uri = Uri.tryParse(url);
+  return uri != null && uri.scheme == 'https' && uri.pathSegments.isNotEmpty && uri.pathSegments.first == 'address';
 }
 
 /// A navigation to your redirect_url: finish with its query parameters.

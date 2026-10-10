@@ -25,6 +25,8 @@ React Native 0.72+, `react-native-webview` 13+. iOS 14.3+ (camera inside web vie
 <uses-permission android:name="android.permission.CAMERA" />
 ```
 
+Using address links? Also add location: `NSLocationWhenInUseUsageDescription` (iOS) and `<uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />` (Android).
+
 ## Use
 
 Your **server** creates the session with a UVerify server SDK and returns its `url` and `id`. Never put your API key in the app.
@@ -57,6 +59,10 @@ The result in the app is only a hint to move on; **trust what your server gets f
 
 The same component opens a verification link (`link.url` from `kyc.createLink`): `onFinish` receives `{ type: 'kyc', id, status, outcome }`.
 
+### Address links
+
+It also opens an address link (`link.url` from `address.createLink`), where the customer shares their phone's location at home. The component asks for location instead of the camera, and `onFinish` receives `{ type: 'address', id, status, result }`. Read the distance and details on your server with `address.getLink(id)`.
+
 ### Options
 
 | Prop | |
@@ -64,7 +70,7 @@ The same component opens a verification link (`link.url` from `kyc.createLink`):
 | `url` | The session or link `url` from your server |
 | `redirectUrl` | The `redirect_url` you created it with, if any; reaching it also finishes (`{ type: 'redirect', params }`) |
 | `onFinish(result)` | The flow finished |
-| `onCancel(reason)` | Back button, or the camera was refused |
+| `onCancel(reason)` | `back`, or `camera_denied` / `location_denied` |
 | `allowedHosts` | Extra hosts allowed in the view (UVerify’s are always allowed; everything else is blocked) |
 
 MIT licence.

@@ -203,4 +203,14 @@ final class ClientTest extends TestCase
         $u->address->verifyDocument(['front_image' => 'x', 'address' => 'x', 'state' => 'Lagos']); $u->address->getDocument('id-x'); $u->address->listDocuments();
         $this->assertSame([], array_values(array_filter($routes, fn ($r) => !isset($seen[$r]))));
     }
+
+    public function testByteIdIsTheSameClient(): void
+    {
+        $u = new \UVerify\ByteID('uvk_test_x');
+        $this->assertInstanceOf(UVerify::class, $u);
+        putenv('UVERIFY_API_KEY');
+        putenv('BYTEID_API_KEY=uvk_live_new');
+        $this->assertSame('live', (new \UVerify\ByteID())->environment());
+        putenv('BYTEID_API_KEY');
+    }
 }

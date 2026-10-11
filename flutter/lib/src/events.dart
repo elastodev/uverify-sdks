@@ -57,7 +57,8 @@ UVerifyResult? parseMessage(String data) {
   } catch (_) {
     return null;
   }
-  if (m is! Map || m['source'] != 'uverify') return null;
+  // 'uverify' is what the hosted pages send (unchanged by the ByteID rename); 'byteid' is accepted too.
+  if (m is! Map || (m['source'] != 'uverify' && m['source'] != 'byteid')) return null;
   if (m['type'] == 'liveness.finished' && m['session_id'] is String) {
     return LivenessResult(m['session_id'] as String, '${m['status']}');
   }

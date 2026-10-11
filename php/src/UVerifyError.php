@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace UVerify;
 
-/** Every API error. Branch on $e->code: it's stable (https://uverify.com.ng/docs#responses). */
+/** Every API error. Branch on $e->code: it's stable (https://byteid.ng/docs#responses). */
 class UVerifyError extends \RuntimeException
 {
     public function __construct(

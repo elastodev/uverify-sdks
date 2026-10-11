@@ -1,6 +1,8 @@
-# UVerify for Python
+# ByteID for Python
 
-The official Python library for [UVerify](https://uverify.com.ng): BVN, NIN, driver’s licence and voter’s card checks, liveness and face match, ID documents, AML screening and CAC, for Nigerian businesses.
+> ByteID was called UVerify. Package names are unchanged, and `UVerify` still works as an alias of `ByteID`.
+
+The official Python library for [ByteID](https://byteid.ng): BVN, NIN, driver’s licence and voter’s card checks, liveness and face match, ID documents, AML screening and CAC, for Nigerian businesses.
 
 ```bash
 pip install uverify
@@ -11,11 +13,11 @@ Python 3.8 or later. No dependencies.
 ## Quick start
 
 ```python
-from uverify import UVerify
+from uverify import ByteID
 
-uverify = UVerify("uvk_test_...")  # or set UVERIFY_API_KEY; uvk_test_ is the free sandbox
+byteid = ByteID("uvk_test_...")  # or set BYTEID_API_KEY; uvk_test_ is the free sandbox
 
-v = uverify.identity.nin(id_number="12345678901", first_name="Adaeze", last_name="Okafor")
+v = byteid.identity.nin(id_number="12345678901", first_name="Adaeze", last_name="Okafor")
 if v["status"] == "verified":
     print(v["data"], v["field_matches"])
 ```
@@ -25,9 +27,9 @@ In the sandbox the last two digits of the ID number choose the result: `00` not 
 ## A live customer, end to end
 
 ```python
-session = uverify.liveness.create_session(redirect_url="https://yourapp.com/kyc/done")
+session = byteid.liveness.create_session(redirect_url="https://yourapp.com/kyc/done")
 # send the person to session["url"]; when they come back:
-v = uverify.identity.bvn_face_match(
+v = byteid.identity.bvn_face_match(
     id_number="22212345678", first_name="Adaeze", last_name="Okafor",
     liveness_session_id=session["id"],
     aml_screening=True,
@@ -39,33 +41,33 @@ if v["status"] == "verified" and v["face_match"]["status"] == "matched" and v["a
 ## Everything else
 
 ```python
-uverify.identity.bvn(id_number=..., first_name=..., last_name=...)       # also drivers_license, voters_card, tin
-uverify.identity.nin_face_match(id_number=..., selfie_image=open("me.jpg", "rb").read())
-uverify.business.cac(id_number="RC123456", aml_screening=True)
+byteid.identity.bvn(id_number=..., first_name=..., last_name=...)       # also drivers_license, voters_card, tin
+byteid.identity.nin_face_match(id_number=..., selfie_image=open("me.jpg", "rb").read())
+byteid.business.cac(id_number="RC123456", aml_screening=True)
 
-uverify.documents.verify(front_image=open("nin.jpg", "rb").read(), document_type="nin_card")
-uverify.aml.screen(name="Adaeze Okafor", date_of_birth="1990-01-15")
-uverify.aml.monitors.create(name="Adaeze Okafor")
-link = uverify.kyc.create_link(customer_name="Ada", require_document=True)   # send link["url"]
+byteid.documents.verify(front_image=open("nin.jpg", "rb").read(), document_type="nin_card")
+byteid.aml.screen(name="Adaeze Okafor", date_of_birth="1990-01-15")
+byteid.aml.monitors.create(name="Adaeze Okafor")
+link = byteid.kyc.create_link(customer_name="Ada", require_document=True)   # send link["url"]
 
-uverify.address.verify(address="12 Admiralty Way, Lekki Phase 1", lga="Eti-Osa", state="Lagos")  # on the map, in that LGA and state?
-home = uverify.address.create_link(address="12 Admiralty Way", state="Lagos", customer_name="Ada")
+byteid.address.verify(address="12 Admiralty Way, Lekki Phase 1", lga="Eti-Osa", state="Lagos")  # on the map, in that LGA and state?
+home = byteid.address.create_link(address="12 Admiralty Way", state="Lagos", customer_name="Ada")
 # send home["url"]: they open it at home and share their phone's location; read result / location["distance_m"] later
-uverify.address.verify_document(front_image=open("bill.jpg", "rb").read(), address="12 Admiralty Way", state="Lagos", name="Adaeze Okafor")
+byteid.address.verify_document(front_image=open("bill.jpg", "rb").read(), address="12 Admiralty Way", state="Lagos", name="Adaeze Okafor")
 
-uverify.verifications.list(status="verified")
-uverify.account.balance()
+byteid.verifications.list(status="verified")
+byteid.account.balance()
 ```
 
-Responses are plain dicts, exactly as in the [API reference](https://uverify.com.ng/docs).
+Responses are plain dicts, exactly as in the [API reference](https://byteid.ng/docs).
 
 ## Errors
 
 ```python
-from uverify import UVerifyError
+from uverify import ByteIDError
 
 try:
-    uverify.identity.nin(id_number=id_number)
+    byteid.identity.nin(id_number=id_number)
 except UVerifyError as e:
     if e.code == "insufficient_balance":
         ...
@@ -86,7 +88,7 @@ from uverify import construct_event, UVerifySignatureError
 @app.post("/webhooks/uverify")          # Flask/FastAPI/Django: use the raw body
 def hook():
     try:
-        event = construct_event(request.get_data(), request.headers.get("UVerify-Signature"), WEBHOOK_SECRET)
+        event = construct_event(request.get_data(), request.headers.get("ByteID-Signature"), WEBHOOK_SECRET)
     except UVerifySignatureError:
         return "", 400
     if event["type"] == "verification.completed":

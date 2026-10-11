@@ -1,10 +1,10 @@
 {
   "name": "@uverifyng/react-native-liveness",
-  "version": "0.2.0",
-  "description": "UVerify's face check (liveness) and verification links inside a React Native app.",
+  "version": "0.2.1",
+  "description": "ByteID's (formerly UVerify) face check (liveness) and verification links inside a React Native app.",
   "license": "MIT",
   "author": "Elasto Web Services Limited",
-  "homepage": "https://uverify.com.ng/docs",
+  "homepage": "https://byteid.ng/docs",
   "repository": { "type": "git", "url": "https://github.com/elastodev/uverify-sdks", "directory": "react-native" },
   "keywords": ["uverify", "liveness", "face-match", "kyc", "react-native", "nigeria"],
   "main": "dist/index.js",

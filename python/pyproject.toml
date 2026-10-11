@@ -4,8 +4,8 @@ build-backend = "hatchling.build"
 
 [project]
 name = "uverify"
-version = "0.2.0"
-description = "Official Python library for the UVerify API: BVN, NIN and ID checks, liveness, face match, ID documents and AML screening for Nigeria."
+version = "0.2.1"
+description = "Official Python library for the ByteID API (formerly UVerify): BVN, NIN and ID checks, liveness, face match, ID documents and AML screening for Nigeria."
 readme = "README.md"
 requires-python = ">=3.8"
 license = { text = "MIT" }
@@ -20,8 +20,8 @@ classifiers = [
 dependencies = []
 
 [project.urls]
-Homepage = "https://uverify.com.ng"
-Documentation = "https://uverify.com.ng/docs"
+Homepage = "https://byteid.ng"
+Documentation = "https://byteid.ng/docs"
 Source = "https://github.com/elastodev/uverify-sdks"
 
 [tool.hatch.build.targets.wheel]

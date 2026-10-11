@@ -15,7 +15,7 @@ from typing import Any, Callable, Dict, Optional, Tuple, Union
 from . import webhooks as _webhooks
 from .errors import UVerifyConnectionError, UVerifyError
 
-VERSION = "0.2.0"
+VERSION = "0.2.1"
 DEFAULT_BASE_URL = "https://api.uverify.com.ng/v1"
 IMAGE_FIELDS = ("selfie_image", "front_image", "back_image")
 
@@ -74,11 +74,11 @@ class UVerify:
         max_retries: int = 2,
         transport: Optional[Transport] = None,
     ) -> None:
-        key = api_key or os.environ.get("UVERIFY_API_KEY", "")
+        key = api_key or os.environ.get("BYTEID_API_KEY") or os.environ.get("UVERIFY_API_KEY", "")
         if not key:
-            raise ValueError("UVerify: pass api_key (uvk_test_... or uvk_live_...) or set UVERIFY_API_KEY.")
+            raise ValueError("ByteID: pass api_key (uvk_test_... or uvk_live_...) or set BYTEID_API_KEY.")
         self._key = key
-        self._base = (base_url or os.environ.get("UVERIFY_BASE_URL") or DEFAULT_BASE_URL).rstrip("/")
+        self._base = (base_url or os.environ.get("BYTEID_BASE_URL") or os.environ.get("UVERIFY_BASE_URL") or DEFAULT_BASE_URL).rstrip("/")
         self._timeout = timeout
         self._max_retries = max_retries
         self._transport = transport or _urllib_transport

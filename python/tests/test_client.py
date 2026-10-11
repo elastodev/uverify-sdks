@@ -188,3 +188,22 @@ class Contract(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class ByteIDNameTest(unittest.TestCase):
+    def test_alias_and_env(self):
+        import os
+        import uverify
+        self.assertIs(uverify.ByteID, uverify.UVerify)
+        saved = {k: os.environ.pop(k, None) for k in ("BYTEID_API_KEY", "UVERIFY_API_KEY")}
+        try:
+            os.environ["BYTEID_API_KEY"] = "uvk_live_new"
+            self.assertEqual(uverify.ByteID().environment, "live")
+            del os.environ["BYTEID_API_KEY"]
+            os.environ["UVERIFY_API_KEY"] = "uvk_test_old"
+            self.assertEqual(uverify.ByteID().environment, "test")
+        finally:
+            for k, v in saved.items():
+                os.environ.pop(k, None)
+                if v is not None:
+                    os.environ[k] = v

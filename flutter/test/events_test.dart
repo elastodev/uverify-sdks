@@ -54,4 +54,9 @@ void main() {
     expect(isAllowed('https://evil-uverify.com.ng.attacker.io/', hosts), isFalse);
     expect(isAllowed('https://notuverify.com.ng/', hosts), isFalse);
   });
+
+  test('accepts messages from the renamed pages too', () {
+    final k = parseMessage(jsonEncode({'source': 'byteid', 'type': 'kyc.finished', 'id': 'k1', 'status': 'completed', 'outcome': 'verified'}));
+    expect(k, isA<KycResult>());
+  });
 }

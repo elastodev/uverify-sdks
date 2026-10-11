@@ -1,6 +1,8 @@
-# UVerify SDKs
+# ByteID SDKs
 
-Official libraries for the [UVerify API](https://uverify.com.ng/docs): BVN, NIN, driver’s licence and voter’s card checks, liveness and face match, ID documents, AML screening and CAC, for Nigerian businesses.
+> ByteID was called UVerify. Package names are unchanged, and `UVerify` still works as an alias of `ByteID`.
+
+Official libraries for the [ByteID API](https://byteid.ng/docs): BVN, NIN, driver’s licence and voter’s card checks, liveness and face match, ID documents, AML screening and CAC, for Nigerian businesses.
 
 | | Package | Install |
 |---|---|---|
@@ -10,7 +12,7 @@ Official libraries for the [UVerify API](https://uverify.com.ng/docs): BVN, NIN,
 | React Native (face check) | [`react-native/`](react-native) | `npm install @uverifyng/react-native-liveness react-native-webview` |
 | Flutter (face check) | [`flutter/`](flutter) | `flutter pub add uverify_liveness` |
 
-**Server SDKs** call the API with your secret key: never ship a key in a mobile app. **Mobile packages** show UVerify’s hosted face check (or a verification link) in your app and hand back the session id; your server then runs the face match.
+**Server SDKs** call the API with your secret key: never ship a key in a mobile app. **Mobile packages** show ByteID’s hosted face check (or a verification link) in your app and hand back the session id; your server then runs the face match.
 
 All server SDKs behave the same way:
 

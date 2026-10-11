@@ -9,7 +9,7 @@ export type UVerifyResult =
   | { type: 'address'; id: string; status: 'completed' | 'expired'; result: 'verified' | 'partial' | 'failed' | null }
   | { type: 'redirect'; url: string; params: Record<string, string> };
 
-/** The hosted page's "finished" message (posted by uverify.com.ng), or null if it's something else. */
+/** The hosted page's "finished" message (posted by byteid.ng or uverify.com.ng), or null if it's something else. */
 export function parseMessage(data: string): UVerifyResult | null {
   let m: any;
   try {
@@ -17,7 +17,8 @@ export function parseMessage(data: string): UVerifyResult | null {
   } catch {
     return null;
   }
-  if (m?.source !== 'uverify') return null;
+  // 'uverify' is what the hosted pages send (unchanged by the ByteID rename, so older SDKs keep working).
+  if (m?.source !== 'uverify' && m?.source !== 'byteid') return null;
   if (m.type === 'liveness.finished' && typeof m.session_id === 'string') return { type: 'liveness', sessionId: m.session_id, status: m.status };
   if (m.type === 'kyc.finished' && typeof m.id === 'string') return { type: 'kyc', id: m.id, status: m.status, outcome: m.outcome ?? null };
   if (m.type === 'address.finished' && typeof m.id === 'string') return { type: 'address', id: m.id, status: m.status, result: m.result ?? null };

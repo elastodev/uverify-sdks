@@ -38,11 +38,11 @@ import type {
 } from './types.js';
 import { constructEvent, signPayload } from './webhooks.js';
 
-export const VERSION = '0.2.0';
+export const VERSION = '0.2.1';
 const DEFAULT_BASE_URL = 'https://api.uverify.com.ng/v1';
 
 export interface UVerifyOptions {
-  /** uvk_test_… (sandbox, free) or uvk_live_…. Defaults to the UVERIFY_API_KEY environment variable. */
+  /** uvk_test_… (sandbox, free) or uvk_live_…. Defaults to the BYTEID_API_KEY (or older UVERIFY_API_KEY) environment variable. */
   apiKey?: string;
   /** Defaults to https://api.uverify.com.ng/v1. */
   baseUrl?: string;
@@ -74,7 +74,7 @@ function toBase64(v: ImageInput): string {
  *
  * ```ts
  * import { UVerify } from '@uverifyng/node';
- * const uverify = new UVerify({ apiKey: process.env.UVERIFY_API_KEY });
+ * const byteid = new ByteID({ apiKey: process.env.BYTEID_API_KEY });
  * const v = await uverify.identity.nin({ id_number: '12345678901' });
  * if (v.status === 'verified') { … }
  * ```
@@ -101,10 +101,10 @@ export class UVerify {
 
   constructor(options: UVerifyOptions | string = {}) {
     const o = typeof options === 'string' ? { apiKey: options } : options;
-    const key = o.apiKey ?? process.env.UVERIFY_API_KEY ?? '';
-    if (!key) throw new Error('UVerify: pass an apiKey (uvk_test_… or uvk_live_…) or set UVERIFY_API_KEY.');
+    const key = o.apiKey ?? process.env.BYTEID_API_KEY ?? process.env.UVERIFY_API_KEY ?? '';
+    if (!key) throw new Error('ByteID: pass an apiKey (uvk_test_… or uvk_live_…) or set BYTEID_API_KEY.');
     this.apiKey = key;
-    this.baseUrl = (o.baseUrl ?? process.env.UVERIFY_BASE_URL ?? DEFAULT_BASE_URL).replace(/\/+$/, '');
+    this.baseUrl = (o.baseUrl ?? process.env.BYTEID_BASE_URL ?? process.env.UVERIFY_BASE_URL ?? DEFAULT_BASE_URL).replace(/\/+$/, '');
     this.timeoutMs = o.timeoutMs ?? 60_000;
     this.maxRetries = o.maxRetries ?? 2;
     this.fetchImpl = o.fetch ?? fetch;

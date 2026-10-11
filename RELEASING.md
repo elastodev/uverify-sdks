@@ -43,7 +43,7 @@ The release checks the package file against the tag and stops if they differ. Th
 | Node | `node/package.json` (`"version"`) and `node/src/client.ts` (`VERSION`) |
 | React Native | `react-native/package.json` (`"version"`) |
 | Python | `python/pyproject.toml` (`version`) and `python/src/uverify/client.py` (`VERSION`) |
-| PHP | `php/src/UVerify.php` (`VERSION`); `composer.json` has no version, Packagist reads it from the tag |
+| PHP | `php/src/ByteID.php` (`VERSION`); `composer.json` has no version, Packagist reads it from the tag |
 | Flutter | `flutter/pubspec.yaml` (`version`), and a new section at the top of `flutter/CHANGELOG.md` (pub.dev shows it) |
 
 For Node and React Native, update the lockfile in the same folder too: `npm install --package-lock-only`.

@@ -47,7 +47,7 @@ class _UVerifyLivenessViewState extends State<UVerifyLivenessView> {
   bool _done = false;
   late final bool _location = needsLocation(widget.url);
 
-  List<String> get _hosts => ['byteid.ng', 'uverify.com.ng', ...widget.allowedHosts.map((h) => h.toLowerCase())];
+  List<String> get _hosts => ['bytid.com', 'byteid.ng', 'uverify.com.ng', ...widget.allowedHosts.map((h) => h.toLowerCase())];
 
   @override
   void initState() {

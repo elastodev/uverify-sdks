@@ -38,13 +38,13 @@ import type {
 } from './types.js';
 import { constructEvent, signPayload } from './webhooks.js';
 
-export const VERSION = '0.2.1';
-const DEFAULT_BASE_URL = 'https://api.uverify.com.ng/v1';
+export const VERSION = '0.2.2';
+const DEFAULT_BASE_URL = 'https://api.bytid.com/v1';
 
 export interface UVerifyOptions {
-  /** uvk_test_… (sandbox, free) or uvk_live_…. Defaults to the BYTEID_API_KEY (or older UVERIFY_API_KEY) environment variable. */
+  /** uvk_test_… (sandbox, free) or uvk_live_…. Defaults to the BYTID_API_KEY (or older BYTEID_API_KEY / UVERIFY_API_KEY) environment variable. */
   apiKey?: string;
-  /** Defaults to https://api.uverify.com.ng/v1. */
+  /** Defaults to https://api.bytid.com/v1. */
   baseUrl?: string;
   /** Per attempt. Face matches and ID documents can take several seconds. Default 60s. */
   timeoutMs?: number;
@@ -70,12 +70,12 @@ function toBase64(v: ImageInput): string {
 }
 
 /**
- * The UVerify API client.
+ * The Bytid API client (also exported as UVerify and ByteID).
  *
  * ```ts
- * import { UVerify } from '@uverifyng/node';
- * const byteid = new ByteID({ apiKey: process.env.BYTEID_API_KEY });
- * const v = await uverify.identity.nin({ id_number: '12345678901' });
+ * import { Bytid } from '@uverifyng/node';
+ * const bytid = new Bytid({ apiKey: process.env.BYTID_API_KEY });
+ * const v = await bytid.identity.nin({ id_number: '12345678901' });
  * if (v.status === 'verified') { … }
  * ```
  */
@@ -101,10 +101,10 @@ export class UVerify {
 
   constructor(options: UVerifyOptions | string = {}) {
     const o = typeof options === 'string' ? { apiKey: options } : options;
-    const key = o.apiKey ?? process.env.BYTEID_API_KEY ?? process.env.UVERIFY_API_KEY ?? '';
-    if (!key) throw new Error('ByteID: pass an apiKey (uvk_test_… or uvk_live_…) or set BYTEID_API_KEY.');
+    const key = o.apiKey ?? process.env.BYTID_API_KEY ?? process.env.BYTEID_API_KEY ?? process.env.UVERIFY_API_KEY ?? '';
+    if (!key) throw new Error('Bytid: pass an apiKey (uvk_test_… or uvk_live_…) or set BYTID_API_KEY.');
     this.apiKey = key;
-    this.baseUrl = (o.baseUrl ?? process.env.BYTEID_BASE_URL ?? process.env.UVERIFY_BASE_URL ?? DEFAULT_BASE_URL).replace(/\/+$/, '');
+    this.baseUrl = (o.baseUrl ?? process.env.BYTID_BASE_URL ?? process.env.BYTEID_BASE_URL ?? process.env.UVERIFY_BASE_URL ?? DEFAULT_BASE_URL).replace(/\/+$/, '');
     this.timeoutMs = o.timeoutMs ?? 60_000;
     this.maxRetries = o.maxRetries ?? 2;
     this.fetchImpl = o.fetch ?? fetch;

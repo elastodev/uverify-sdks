@@ -12,7 +12,7 @@ export interface UVerifyWebViewProps {
   onFinish: (result: UVerifyResult) => void;
   /** The person backed out (Android back button), or refused the camera (location, for an address link). */
   onCancel?: (reason: 'back' | 'camera_denied' | 'location_denied') => void;
-  /** Extra hosts to allow (always allowed: byteid.ng, uverify.com.ng and their subdomains). */
+  /** Extra hosts to allow (always allowed: bytid.com, byteid.ng, uverify.com.ng and their subdomains). */
   allowedHosts?: string[];
   style?: StyleProp<ViewStyle>;
 }
@@ -33,7 +33,7 @@ export function UVerifyWebView({ url, redirectUrl, onFinish, onCancel, allowedHo
   const [cameraOk, setCameraOk] = useState(Platform.OS !== 'android');
   const [denied, setDenied] = useState(false);
   const done = useRef(false);
-  const hosts = ['byteid.ng', 'uverify.com.ng', ...allowedHosts.map((h) => h.toLowerCase())];
+  const hosts = ['bytid.com', 'byteid.ng', 'uverify.com.ng', ...allowedHosts.map((h) => h.toLowerCase())];
 
   const finish = useCallback(
     (r: UVerifyResult) => {

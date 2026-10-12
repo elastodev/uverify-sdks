@@ -1,3 +1,7 @@
+## 0.2.2
+
+- UVerify is now Bytid: pages on bytid.com load in the view (uverify.com.ng and byteid.ng still do), and `BytidLivenessView` / `BytidLiveness` are the same widget and helper under the new name. Nothing to change in your app.
+
 ## 0.2.1
 
 - UVerify is now ByteID: pages on byteid.ng load in the view (uverify.com.ng still does), and messages from the renamed pages are understood. Nothing to change in your app.

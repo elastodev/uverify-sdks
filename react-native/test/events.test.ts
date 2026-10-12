@@ -11,6 +11,7 @@ describe('messages from the hosted page', () => {
     expect(parseMessage(JSON.stringify({ source: 'uverify', type: 'address.finished', id: 'a1', status: 'expired' }))).toEqual({ type: 'address', id: 'a1', status: 'expired', result: null });
   });
   it('accepts messages from the renamed pages too', () => {
+    expect(parseMessage(JSON.stringify({ source: 'bytid', type: 'kyc.finished', id: 'k1', status: 'completed', outcome: 'verified' }))).toEqual({ type: 'kyc', id: 'k1', status: 'completed', outcome: 'verified' });
     expect(parseMessage(JSON.stringify({ source: 'byteid', type: 'kyc.finished', id: 'k1', status: 'completed', outcome: 'verified' }))).toEqual({ type: 'kyc', id: 'k1', status: 'completed', outcome: 'verified' });
   });
   it('knows an address link needs location, not the camera', () => {

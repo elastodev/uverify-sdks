@@ -1,4 +1,4 @@
-/** Every API error. Branch on `code`: it's stable (https://byteid.ng/docs#responses). */
+/** Every API error. Branch on `code`: it's stable (https://www.bytid.com/docs#responses). */
 export class UVerifyError extends Error {
   /** e.g. validation_error, insufficient_balance, duplicate_reference, rate_limited. */
   readonly code: string;

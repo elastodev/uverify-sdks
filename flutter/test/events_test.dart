@@ -58,5 +58,8 @@ void main() {
   test('accepts messages from the renamed pages too', () {
     final k = parseMessage(jsonEncode({'source': 'byteid', 'type': 'kyc.finished', 'id': 'k1', 'status': 'completed', 'outcome': 'verified'}));
     expect(k, isA<KycResult>());
+    expect(parseMessage(jsonEncode({'source': 'bytid', 'type': 'kyc.finished', 'id': 'k1', 'status': 'completed', 'outcome': 'verified'})), isA<KycResult>());
+    expect(isAllowed('https://www.bytid.com/liveness/s1#tok', ['bytid.com']), isTrue);
+    expect(BytidLivenessView, UVerifyLivenessView);
   });
 }

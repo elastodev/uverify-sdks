@@ -213,4 +213,15 @@ final class ClientTest extends TestCase
         $this->assertSame('live', (new \UVerify\ByteID())->environment());
         putenv('BYTEID_API_KEY');
     }
+
+    public function testBytidIsTheSameClient(): void
+    {
+        $this->assertInstanceOf(UVerify::class, new \UVerify\Bytid('uvk_test_x'));
+        putenv('UVERIFY_API_KEY');
+        putenv('BYTEID_API_KEY=uvk_test_old');
+        putenv('BYTID_API_KEY=uvk_live_new');
+        $this->assertSame('live', (new \UVerify\Bytid())->environment());
+        putenv('BYTID_API_KEY');
+        putenv('BYTEID_API_KEY');
+    }
 }

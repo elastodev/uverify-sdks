@@ -1,10 +1,10 @@
 {
   "name": "uverify/uverify-php",
-  "description": "Official PHP library for the ByteID API (formerly UVerify): BVN, NIN and ID checks, liveness, face match, ID documents and AML screening for Nigeria.",
+  "description": "Official PHP library for the Bytid API (formerly UVerify): BVN, NIN and ID checks, liveness, face match, ID documents and AML screening for Nigeria.",
   "type": "library",
   "license": "MIT",
   "keywords": ["uverify", "kyc", "bvn", "nin", "liveness", "face-match", "aml", "nigeria"],
-  "homepage": "https://byteid.ng/docs",
+  "homepage": "https://www.bytid.com/docs",
   "authors": [{ "name": "Elasto Web Services Limited" }],
   "require": {
     "php": ">=8.1",

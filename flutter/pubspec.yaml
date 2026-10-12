@@ -1,7 +1,7 @@
 name: uverify_liveness
-description: ByteID's (formerly UVerify) face check (liveness), verification links and address links inside a Flutter app, for identity verification in Nigeria.
-version: 0.2.1
-homepage: https://byteid.ng/docs
+description: Bytid's (formerly UVerify) face check (liveness), verification links and address links inside a Flutter app, for identity verification in Nigeria.
+version: 0.2.2
+homepage: https://www.bytid.com/docs
 repository: https://github.com/elastodev/uverify-sdks/tree/main/flutter
 topics: [kyc, liveness, face-verification, identity, nigeria]
 

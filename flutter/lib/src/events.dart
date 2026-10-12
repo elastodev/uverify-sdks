@@ -57,8 +57,8 @@ UVerifyResult? parseMessage(String data) {
   } catch (_) {
     return null;
   }
-  // 'uverify' is what the hosted pages send (unchanged by the ByteID rename); 'byteid' is accepted too.
-  if (m is! Map || (m['source'] != 'uverify' && m['source'] != 'byteid')) return null;
+  // 'uverify' is what the hosted pages send (unchanged by the renames); 'bytid' and 'byteid' are accepted too.
+  if (m is! Map || (m['source'] != 'uverify' && m['source'] != 'bytid' && m['source'] != 'byteid')) return null;
   if (m['type'] == 'liveness.finished' && m['session_id'] is String) {
     return LivenessResult(m['session_id'] as String, '${m['status']}');
   }

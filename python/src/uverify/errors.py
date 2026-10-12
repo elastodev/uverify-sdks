@@ -4,7 +4,7 @@ from typing import Any, Optional
 
 
 class UVerifyError(Exception):
-    """Every API error. Branch on ``code``: it's stable (https://byteid.ng/docs#responses)."""
+    """Every API error. Branch on ``code``: it's stable (https://www.bytid.com/docs#responses)."""
 
     def __init__(self, message: str, *, code: str, status: int, request_id: Optional[str] = None, details: Any = None) -> None:
         super().__init__(message)

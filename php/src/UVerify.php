@@ -13,8 +13,8 @@ namespace UVerify;
  */
 final class UVerify
 {
-    public const VERSION = '0.2.1';
-    private const DEFAULT_BASE_URL = 'https://api.uverify.com.ng/v1';
+    public const VERSION = '0.2.2';
+    private const DEFAULT_BASE_URL = 'https://api.bytid.com/v1';
     private const IMAGE_FIELDS = ['selfie_image', 'front_image', 'back_image'];
 
     public readonly Resources\Identity $identity;
@@ -37,12 +37,12 @@ final class UVerify
      */
     public function __construct(?string $apiKey = null, array $options = [])
     {
-        $key = $apiKey ?? (getenv('BYTEID_API_KEY') ?: (getenv('UVERIFY_API_KEY') ?: ''));
+        $key = $apiKey ?? (getenv('BYTID_API_KEY') ?: (getenv('BYTEID_API_KEY') ?: (getenv('UVERIFY_API_KEY') ?: '')));
         if ($key === '') {
-            throw new \InvalidArgumentException('ByteID: pass an API key (uvk_test_... or uvk_live_...) or set BYTEID_API_KEY.');
+            throw new \InvalidArgumentException('Bytid: pass an API key (uvk_test_... or uvk_live_...) or set BYTID_API_KEY.');
         }
         $this->apiKey = $key;
-        $this->baseUrl = rtrim($options['base_url'] ?? (getenv('BYTEID_BASE_URL') ?: (getenv('UVERIFY_BASE_URL') ?: self::DEFAULT_BASE_URL)), '/');
+        $this->baseUrl = rtrim($options['base_url'] ?? (getenv('BYTID_BASE_URL') ?: (getenv('BYTEID_BASE_URL') ?: (getenv('UVERIFY_BASE_URL') ?: self::DEFAULT_BASE_URL))), '/');
         $this->timeout = (float) ($options['timeout'] ?? 60.0);
         $this->maxRetries = (int) ($options['max_retries'] ?? 2);
         $this->transport = $options['transport'] ?? [self::class, 'curlTransport'];

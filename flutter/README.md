@@ -1,10 +1,10 @@
-# ByteID liveness for Flutter
+# Bytid liveness for Flutter
 
-> ByteID was called UVerify. Package names are unchanged, and `UVerify` still works as an alias of `ByteID`.
+> Bytid was called UVerify (and, briefly, ByteID). Package names are unchanged, and `UVerify` and `ByteID` still work as aliases of `Bytid`.
 
-ByteID's face check (liveness), and verification links, inside your Flutter app.
+Bytid's face check (liveness), and verification links, inside your Flutter app.
 
-The check runs on ByteID's hosted page, the same one your customers get in a browser, so every anti-spoofing layer (depth, colour flash, random prompts) applies, and improvements reach your app without an app update.
+The check runs on Bytid's hosted page, the same one your customers get in a browser, so every anti-spoofing layer (depth, colour flash, random prompts) applies, and improvements reach your app without an app update.
 
 ```bash
 flutter pub add uverify_liveness
@@ -44,7 +44,7 @@ Using address links? Also add `NSLocationWhenInUseUsageDescription` to `Info.pli
 
 ## Use
 
-Your **server** creates the session with a ByteID server SDK and returns its `url`. Never put your API key in the app.
+Your **server** creates the session with a Bytid server SDK and returns its `url`. Never put your API key in the app.
 
 ```dart
 import 'package:uverify_liveness/uverify_liveness.dart';
@@ -66,7 +66,7 @@ switch (result) {
 Then, on your server, run the face match with that session:
 
 ```ts
-await byteid.identity.bvnFaceMatch({ id_number, first_name, last_name, liveness_session_id: sessionId });
+await bytid.identity.bvnFaceMatch({ id_number, first_name, last_name, liveness_session_id: sessionId });
 ```
 
 The result in the app is only a hint to move on; **trust what your server gets from the API**.
@@ -91,7 +91,7 @@ It also opens an address link (`link.url` from `address.createLink`), where the 
 |---|---|
 | `url` | The session or link `url` from your server |
 | `redirectUrl` | The `redirect_url` you created it with, if any; reaching it also finishes (`RedirectResult` with its query `params`) |
-| `allowedHosts` | Extra hosts allowed in the view (ByteID's are always allowed; everything else is blocked) |
+| `allowedHosts` | Extra hosts allowed in the view (Bytid's are always allowed; everything else is blocked) |
 | `title` | `UVerifyLiveness.start` only: the app bar title |
 
-API reference: https://byteid.ng/docs. MIT licence.
+API reference: https://www.bytid.com/docs. MIT licence.

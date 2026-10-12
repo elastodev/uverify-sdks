@@ -207,3 +207,23 @@ class ByteIDNameTest(unittest.TestCase):
                 os.environ.pop(k, None)
                 if v is not None:
                     os.environ[k] = v
+
+
+class BytidNameTest(unittest.TestCase):
+    def test_alias_and_env(self):
+        import os
+        import uverify
+        self.assertIs(uverify.Bytid, uverify.UVerify)
+        names = ("BYTID_API_KEY", "BYTEID_API_KEY", "UVERIFY_API_KEY")
+        saved = {k: os.environ.pop(k, None) for k in names}
+        try:
+            os.environ["BYTID_API_KEY"] = "uvk_live_new"
+            os.environ["UVERIFY_API_KEY"] = "uvk_test_old"
+            self.assertEqual(uverify.Bytid().environment, "live")
+            del os.environ["BYTID_API_KEY"]
+            self.assertEqual(uverify.Bytid().environment, "test")
+        finally:
+            for k, v in saved.items():
+                os.environ.pop(k, None)
+                if v is not None:
+                    os.environ[k] = v

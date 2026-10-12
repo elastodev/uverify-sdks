@@ -174,3 +174,7 @@ class UVerifyLiveness {
     return result ?? const UVerifyCancelled('closed');
   }
 }
+
+/// UVerify is now Bytid: the same widget and helper under the new name.
+typedef BytidLivenessView = UVerifyLivenessView;
+typedef BytidLiveness = UVerifyLiveness;
